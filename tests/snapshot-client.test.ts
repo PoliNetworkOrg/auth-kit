@@ -81,6 +81,35 @@ describe("accessSnapshot", () => {
     expect(client.has(moderator, "tg:moderate")).toBe(true)
   })
 
+  it.each([null, ""])("rejects a 304 when the snapshot ETag is %j", async (etag) => {
+    let calls = 0
+    const { client, time, requests, persistence } = setup(() =>
+      ++calls === 1
+        ? new Response(BODY, { headers: etag === null ? {} : { ETag: etag } })
+        : new Response(null, { status: 304 })
+    )
+    await client.refresh()
+    const index = client.current()
+    const lastSyncAt = client.status().lastSyncAt
+    const stored = await persistence.load("snapshot:backend")
+    time.advance(60 * 60_000 + 1)
+
+    await expect(client.refresh()).rejects.toMatchObject({ code: "snapshot_unavailable" })
+
+    expect(requests[1]?.headers.has("if-none-match")).toBe(false)
+    expect(client.current()).toBe(index)
+    expect(client.status()).toMatchObject({ lastSyncAt, fresh: false })
+    expect(client.has(moderator, "tg:moderate")).toBe(false)
+    expect(await persistence.load("snapshot:backend")).toBe(stored)
+  })
+
+  it("rejects a 304 without a snapshot", async () => {
+    const { client, persistence } = setup(() => new Response(null, { status: 304 }))
+    await expect(client.refresh()).rejects.toMatchObject({ code: "snapshot_unavailable" })
+    expect(client.status()).toEqual({ lastSyncAt: null, fresh: false, generation: null, subjects: 0 })
+    expect(await persistence.load("snapshot:backend")).toBeNull()
+  })
+
   it("fails closed once the last sync is older than MAX_STALE", async () => {
     let online = true
     const { client, time } = setup(() => (online ? ok() : new Response(null, { status: 503 })))

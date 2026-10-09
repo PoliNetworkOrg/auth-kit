@@ -103,7 +103,9 @@ export function accessSnapshot(options: AccessSnapshotOptions): AccessSnapshotCl
       response = await request(await options.tokens.getToken())
     }
     if (response.status === 304) {
-      if (!state) throw new AuthKitError("snapshot_unavailable", "Snapshot endpoint answered 304 without a snapshot")
+      if (!state?.etag) {
+        throw new AuthKitError("snapshot_unavailable", "Snapshot endpoint answered 304 without a snapshot and ETag")
+      }
       lastSyncAt = now()
       await persist()
       return
