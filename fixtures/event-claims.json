@@ -1,0 +1,12 @@
+{
+  "iss": "https://auth.polinetwork.org/api/auth",
+  "aud": "https://backend.internal.polinetwork.org",
+  "jti": "access-42",
+  "iat": 1791200130,
+  "exp": 1791200190,
+  "events": {
+    "https://schemas.polinetwork.org/events/access-changed": {
+      "projection": "backend"
+    }
+  }
+}

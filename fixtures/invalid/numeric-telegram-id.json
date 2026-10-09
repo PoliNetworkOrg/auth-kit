@@ -1,0 +1,93 @@
+{
+  "schema": "polinetwork.access-snapshot/v1",
+  "projection": "backend",
+  "generation": 4813,
+  "builtAt": "2026-10-09T10:15:02.123Z",
+  "sources": {
+    "rbac": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    },
+    "entra:soci": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:47.210Z"
+    },
+    "entra:direttivo": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:31.456Z"
+    },
+    "entra:admins": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:58.001Z"
+    },
+    "polimi-email": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    }
+  },
+  "subjects": [
+    {
+      "sub": "usr_admin_breakglass",
+      "telegramId": 100000001,
+      "permissions": {
+        "admin:access": {
+          "validUntil": null
+        },
+        "azure:members:create": {
+          "validUntil": null
+        },
+        "groups:labels:write": {
+          "validUntil": null
+        },
+        "tg:audit:read": {
+          "validUntil": null
+        },
+        "tg:bot:add": {
+          "validUntil": null
+        },
+        "tg:grants:manage": {
+          "validUntil": null
+        },
+        "tg:grants:read": {
+          "validUntil": null
+        },
+        "tg:groups:manage": {
+          "validUntil": null
+        },
+        "tg:immune": {
+          "validUntil": null
+        },
+        "tg:messages:delete": {
+          "validUntil": null
+        },
+        "tg:messages:pin": {
+          "validUntil": null
+        },
+        "tg:messages:read": {
+          "validUntil": null
+        },
+        "tg:moderate": {
+          "validUntil": null
+        },
+        "tg:moderate:global": {
+          "validUntil": null
+        },
+        "tg:trusted": {
+          "validUntil": null
+        },
+        "tg:users:read": {
+          "validUntil": null
+        },
+        "wa:groups:manage": {
+          "validUntil": null
+        },
+        "web:content:write": {
+          "validUntil": null
+        },
+        "web:reports:manage": {
+          "validUntil": null
+        }
+      }
+    }
+  ]
+}

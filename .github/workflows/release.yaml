@@ -1,0 +1,39 @@
+# Publishes to npm through trusted publishing with OIDC; no npm token is stored.
+# See docs/releasing.md and https://docs.npmjs.com/trusted-publishers#for-github-actions
+
+name: Release npm package
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write # tags and GitHub releases
+  issues: write
+  pull-requests: write
+  id-token: write # npm trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # semantic-release reads every tag and commit since the last release
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*" # semantic-release 25 and trusted publishing need a recent npm
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm biome ci .
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx --yes semantic-release@25

@@ -1,0 +1,67 @@
+{
+  "name": "@polinetwork/auth-kit",
+  "version": "0.0.0",
+  "description": "SDK for integrating services with the PoliNetwork identity provider (auth.polinetwork.org).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PoliNetworkOrg/auth-kit.git"
+  },
+  "homepage": "https://github.com/PoliNetworkOrg/auth-kit#readme",
+  "keywords": [
+    "polinetwork",
+    "oauth",
+    "oidc",
+    "identity provider"
+  ],
+  "author": "PoliNetwork APS",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "packageManager": "pnpm@10.33.2",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./contract": {
+      "types": "./dist/contract.d.ts",
+      "import": "./dist/contract.js"
+    },
+    "./fixtures/*": "./fixtures/*"
+  },
+  "files": [
+    "dist",
+    "fixtures"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:bun": "bun test tests/",
+    "typecheck": "tsc --noEmit",
+    "check": "biome check",
+    "check:fix": "biome check --write --unsafe",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "jose": "^6.2.12",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.13",
+    "@types/node": "^24.19.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

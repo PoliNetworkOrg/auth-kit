@@ -1,0 +1,210 @@
+{
+  "schema": "polinetwork.access-snapshot/v1",
+  "projection": "backend",
+  "generation": 4813,
+  "builtAt": "2026-10-09T10:15:02.123Z",
+  "sources": {
+    "rbac": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    },
+    "entra:soci": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:47.210Z"
+    },
+    "entra:direttivo": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:31.456Z"
+    },
+    "entra:admins": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:14:58.001Z"
+    },
+    "polimi-email": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    }
+  },
+  "subjects": [
+    {
+      "sub": "usr_admin_breakglass",
+      "telegramId": "100000001",
+      "permissions": {
+        "admin:access": {
+          "validUntil": null
+        },
+        "azure:members:create": {
+          "validUntil": null
+        },
+        "groups:labels:write": {
+          "validUntil": null
+        },
+        "tg:audit:read": {
+          "validUntil": null
+        },
+        "tg:bot:add": {
+          "validUntil": null
+        },
+        "tg:grants:manage": {
+          "validUntil": null
+        },
+        "tg:grants:read": {
+          "validUntil": null
+        },
+        "tg:groups:manage": {
+          "validUntil": null
+        },
+        "tg:immune": {
+          "validUntil": null
+        },
+        "tg:messages:delete": {
+          "validUntil": null
+        },
+        "tg:messages:pin": {
+          "validUntil": null
+        },
+        "tg:messages:read": {
+          "validUntil": null
+        },
+        "tg:moderate": {
+          "validUntil": null
+        },
+        "tg:moderate:global": {
+          "validUntil": null
+        },
+        "tg:trusted": {
+          "validUntil": null
+        },
+        "tg:users:read": {
+          "validUntil": null
+        },
+        "wa:groups:manage": {
+          "validUntil": null
+        },
+        "web:content:write": {
+          "validUntil": null
+        },
+        "web:reports:manage": {
+          "validUntil": null
+        }
+      }
+    },
+    {
+      "sub": "usr_admin_entra",
+      "telegramId": null,
+      "permissions": {
+        "admin:access": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "azure:members:create": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "groups:labels:write": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:audit:read": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:bot:add": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:grants:manage": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:grants:read": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:groups:manage": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:immune": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:messages:delete": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:messages:pin": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:messages:read": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:moderate": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:moderate:global": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:trusted": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "tg:users:read": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "wa:groups:manage": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "web:content:write": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        },
+        "web:reports:manage": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        }
+      }
+    },
+    {
+      "sub": "usr_direttivo",
+      "telegramId": "555",
+      "permissions": {
+        "admin:access": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        },
+        "tg:audit:read": {
+          "validUntil": null
+        },
+        "tg:immune": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        },
+        "tg:moderate": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        },
+        "tg:moderate:global": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        },
+        "tg:trusted": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        }
+      }
+    },
+    {
+      "sub": "usr_moderator",
+      "telegramId": "123456789",
+      "permissions": {
+        "tg:messages:delete": {
+          "validUntil": null
+        },
+        "tg:messages:pin": {
+          "validUntil": null
+        },
+        "tg:moderate": {
+          "validUntil": null
+        },
+        "tg:trusted": {
+          "validUntil": null
+        }
+      }
+    },
+    {
+      "sub": "usr_web",
+      "telegramId": null,
+      "permissions": {
+        "admin:access": {
+          "validUntil": null
+        },
+        "web:content:write": {
+          "validUntil": null
+        }
+      }
+    }
+  ]
+}

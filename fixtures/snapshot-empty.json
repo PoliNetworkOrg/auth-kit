@@ -1,0 +1,21 @@
+{
+  "schema": "polinetwork.access-snapshot/v1",
+  "projection": "backend",
+  "generation": 1,
+  "builtAt": "2026-10-09T10:15:02.123Z",
+  "sources": {
+    "rbac": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    },
+    "entra:soci": {
+      "health": "ok",
+      "observedAt": null
+    },
+    "polimi-email": {
+      "health": "ok",
+      "observedAt": "2026-10-09T10:15:02.123Z"
+    }
+  },
+  "subjects": []
+}
