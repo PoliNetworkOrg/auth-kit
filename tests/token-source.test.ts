@@ -27,8 +27,14 @@ async function setup(respond: (count: number) => Response, ratio?: number) {
   return { key, time, tokens, requests, errors, count: () => count }
 }
 
-/** Lets a background renewal finish. */
-const settle = () => new Promise((resolve) => setTimeout(resolve, 0))
+/** Waits for a background renewal to reach the given state. */
+async function until(condition: () => boolean | Promise<boolean>) {
+  for (let i = 0; i < 200; i++) {
+    if (await condition()) return
+    await new Promise((resolve) => setTimeout(resolve, 1))
+  }
+  throw new Error("condition not met")
+}
 
 const issued = (n: number) =>
   Response.json({ access_token: `token-${n}`, token_type: "Bearer", expires_in: 3600, scope: "backend:tg:read" })
@@ -70,9 +76,8 @@ describe("serviceTokenSource", () => {
     time.advance(2_000)
     // Past the renewal point the valid token is returned at once and a new one is fetched.
     expect(await tokens.getToken()).toBe("token-1")
-    await settle()
+    await until(async () => (await tokens.getToken()) === "token-2")
     expect(count()).toBe(2)
-    expect(await tokens.getToken()).toBe("token-2")
   })
 
   it("keeps serving a cached token while renewal fails, then fails once it expires", async () => {
@@ -84,7 +89,7 @@ describe("serviceTokenSource", () => {
     await tokens.getToken()
     time.advance(2_000_000)
     expect(await tokens.getToken()).toBe("token-1")
-    await settle()
+    await until(() => errors.length === 1)
     expect(errors).toHaveLength(1)
     expect((errors[0] as Error).message).not.toContain("secret detail")
     // Inside the backoff window no new request is made.
