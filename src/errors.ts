@@ -3,8 +3,8 @@ export type AuthKitErrorCode =
   | "token_invalid"
   | "token_request_failed"
   | "keys_unavailable"
+  | "snapshot_unavailable"
   | "actor_forbidden"
-  | "not_implemented"
 
 /** Every error the SDK throws on purpose. `code` is stable; `message` is for logs only. */
 export class AuthKitError extends Error {
@@ -17,9 +17,4 @@ export class AuthKitError extends Error {
   ) {
     super(message, options)
   }
-}
-
-/** Placeholder for scaffolded modules; removed as each module is implemented. */
-export function notImplemented(feature: string): never {
-  throw new AuthKitError("not_implemented", `${feature} is not implemented yet`)
 }

@@ -26,8 +26,17 @@ export {
   DEFAULT_EVENT_PULL_TIMEOUT_MS,
 } from "./snapshot/events"
 export { parseAccessSnapshot } from "./snapshot/parse"
-export { type ServiceTokenSourceOptions, serviceTokenSource, type TokenSource } from "./token-source"
 export {
+  DEFAULT_REFRESH_RATIO,
+  DEFAULT_REQUEST_TIMEOUT_MS,
+  DEFAULT_RETRY_AFTER_FAILURE_MS,
+  type ServiceTokenSourceOptions,
+  serviceTokenSource,
+  type TokenSource,
+} from "./token-source"
+export {
+  DEFAULT_CLOCK_TOLERANCE_SEC,
+  DEFAULT_MAX_TOKEN_AGE,
   type ResolveActorOptions,
   resolveActor,
   type VerifiedToken,
