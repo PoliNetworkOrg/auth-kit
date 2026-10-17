@@ -4,9 +4,43 @@ import { AuthKitError } from "../errors"
 export type AccessSubject = Readonly<{
   sub: string
   telegramId: string | null
+  /** Effective role key → expiry in epoch milliseconds; `null` never expires. */
+  roles: ReadonlyMap<string, number | null>
   /** Permission key → expiry in epoch milliseconds; `null` never expires. */
   permissions: ReadonlyMap<string, number | null>
 }>
+
+export type AccessCatalogEntry = Readonly<{ key: string; name: string }>
+
+/** Names to show in a picker; empty lists when the IdP does not send them. */
+export type AccessCatalog = Readonly<{
+  roles: readonly AccessCatalogEntry[]
+  permissions: readonly AccessCatalogEntry[]
+}>
+
+type Expiries = Record<string, { validUntil: string | null }>
+
+function epochs(entries: Expiries = {}): Map<string, number | null> {
+  return new Map(
+    Object.entries(entries).map(([key, { validUntil }]) => [key, validUntil === null ? null : Date.parse(validUntil)])
+  )
+}
+
+function entries(list: readonly AccessCatalogEntry[] = []): readonly AccessCatalogEntry[] {
+  return Object.freeze(list.map(({ key, name }) => Object.freeze({ key, name })))
+}
+
+/** A key is dropped once `now ≥ validUntil`, whatever the sync state (RFC §5.3). */
+function holds(expiries: ReadonlyMap<string, number | null> | undefined, key: string, now: number): boolean {
+  const validUntil = expiries?.get(key)
+  if (validUntil === undefined) return false
+  return validUntil === null || now < validUntil
+}
+
+function valid(expiries: ReadonlyMap<string, number | null> | undefined, now: number): string[] {
+  if (!expiries) return []
+  return [...expiries.keys()].filter((key) => holds(expiries, key, now)).sort()
+}
 
 /**
  * One validated snapshot, indexed by `sub` and Telegram ID. Immutable, so a client swaps it in
@@ -20,6 +54,7 @@ export class AccessIndex {
   readonly generation: number
   readonly builtAt: string
   readonly sources: AccessSnapshotBody["sources"]
+  readonly #catalog: AccessCatalog
   readonly #bySub: ReadonlyMap<string, AccessSubject>
   readonly #byTelegramId: ReadonlyMap<string, AccessSubject>
 
@@ -32,6 +67,10 @@ export class AccessIndex {
     this.generation = body.generation
     this.builtAt = body.builtAt
     this.sources = body.sources
+    this.#catalog = Object.freeze({
+      roles: entries(body.catalog?.roles),
+      permissions: entries(body.catalog?.permissions),
+    })
     this.#bySub = bySub
     this.#byTelegramId = byTelegramId
   }
@@ -44,12 +83,8 @@ export class AccessIndex {
       const subject: AccessSubject = Object.freeze({
         sub: raw.sub,
         telegramId: raw.telegramId,
-        permissions: new Map(
-          Object.entries(raw.permissions).map(([key, { validUntil }]) => [
-            key,
-            validUntil === null ? null : Date.parse(validUntil),
-          ])
-        ),
+        roles: epochs(raw.roles),
+        permissions: epochs(raw.permissions),
       })
       if (bySub.has(subject.sub)) throw new AuthKitError("snapshot_invalid", `Duplicate sub ${subject.sub}`)
       bySub.set(subject.sub, subject)
@@ -78,14 +113,26 @@ export class AccessIndex {
    * `now ≥ validUntil`, whatever the sync state (RFC §5.3). Staleness is the client's concern.
    */
   has(subject: AccessSubject | undefined, permission: string, now = Date.now()): boolean {
-    const validUntil = subject?.permissions.get(permission)
-    if (validUntil === undefined) return false
-    return validUntil === null || now < validUntil
+    return holds(subject?.permissions, permission, now)
   }
 
   /** The subject's permissions that are still valid at `now`, sorted. */
   permissions(subject: AccessSubject | undefined, now = Date.now()): string[] {
-    if (!subject) return []
-    return [...subject.permissions.keys()].filter((key) => this.has(subject, key, now)).sort()
+    return valid(subject?.permissions, now)
+  }
+
+  /** Whether the subject holds the role, directly or by inheritance, at `now`. Same expiry rule as `has`. */
+  hasRole(subject: AccessSubject | undefined, role: string, now = Date.now()): boolean {
+    return holds(subject?.roles, role, now)
+  }
+
+  /** The subject's effective roles that are still valid at `now`, sorted. */
+  roles(subject: AccessSubject | undefined, now = Date.now()): string[] {
+    return valid(subject?.roles, now)
+  }
+
+  /** Every role, and every permission the projection can carry, with display names. */
+  catalog(): AccessCatalog {
+    return this.#catalog
   }
 }

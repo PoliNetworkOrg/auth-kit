@@ -19,6 +19,7 @@ export {
 } from "./constants"
 export { type AccessChangedEventClaims, accessChangedEventClaims, accessChangedEventSchema } from "./event"
 export {
+  type AccessCatalogV1,
   type AccessSnapshotBody,
   type AccessSnapshotV1,
   type AccessSourceV1,

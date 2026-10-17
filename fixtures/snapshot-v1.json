@@ -25,10 +25,125 @@
       "observedAt": "2026-10-09T10:15:02.123Z"
     }
   },
+  "catalog": {
+    "roles": [
+      {
+        "key": "auditor",
+        "name": "Auditor"
+      },
+      {
+        "key": "direttivo",
+        "name": "Direttivo"
+      },
+      {
+        "key": "master-admin",
+        "name": "Master Admin"
+      },
+      {
+        "key": "moderator",
+        "name": "Moderator"
+      },
+      {
+        "key": "socio",
+        "name": "Socio"
+      },
+      {
+        "key": "student",
+        "name": "Student"
+      },
+      {
+        "key": "web-editor",
+        "name": "Web editor"
+      }
+    ],
+    "permissions": [
+      {
+        "key": "admin:access",
+        "name": "Admin access"
+      },
+      {
+        "key": "azure:members:create",
+        "name": "Azure members create"
+      },
+      {
+        "key": "groups:labels:write",
+        "name": "Groups labels write"
+      },
+      {
+        "key": "tg:audit:read",
+        "name": "Tg audit read"
+      },
+      {
+        "key": "tg:bot:add",
+        "name": "Tg bot add"
+      },
+      {
+        "key": "tg:grants:manage",
+        "name": "Tg grants manage"
+      },
+      {
+        "key": "tg:grants:read",
+        "name": "Tg grants read"
+      },
+      {
+        "key": "tg:groups:manage",
+        "name": "Tg groups manage"
+      },
+      {
+        "key": "tg:immune",
+        "name": "Tg immune"
+      },
+      {
+        "key": "tg:messages:delete",
+        "name": "Tg messages delete"
+      },
+      {
+        "key": "tg:messages:pin",
+        "name": "Tg messages pin"
+      },
+      {
+        "key": "tg:messages:read",
+        "name": "Tg messages read"
+      },
+      {
+        "key": "tg:moderate",
+        "name": "Tg moderate"
+      },
+      {
+        "key": "tg:moderate:global",
+        "name": "Tg moderate global"
+      },
+      {
+        "key": "tg:trusted",
+        "name": "Tg trusted"
+      },
+      {
+        "key": "tg:users:read",
+        "name": "Tg users read"
+      },
+      {
+        "key": "wa:groups:manage",
+        "name": "Wa groups manage"
+      },
+      {
+        "key": "web:content:write",
+        "name": "Web content write"
+      },
+      {
+        "key": "web:reports:manage",
+        "name": "Web reports manage"
+      }
+    ]
+  },
   "subjects": [
     {
       "sub": "usr_admin_breakglass",
       "telegramId": "100000001",
+      "roles": {
+        "master-admin": {
+          "validUntil": null
+        }
+      },
       "permissions": {
         "admin:access": {
           "validUntil": null
@@ -92,6 +207,11 @@
     {
       "sub": "usr_admin_entra",
       "telegramId": null,
+      "roles": {
+        "master-admin": {
+          "validUntil": "2026-10-09T11:14:58.001Z"
+        }
+      },
       "permissions": {
         "admin:access": {
           "validUntil": "2026-10-09T11:14:58.001Z"
@@ -155,6 +275,17 @@
     {
       "sub": "usr_direttivo",
       "telegramId": "555",
+      "roles": {
+        "auditor": {
+          "validUntil": null
+        },
+        "direttivo": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        },
+        "socio": {
+          "validUntil": "2026-10-09T11:14:31.456Z"
+        }
+      },
       "permissions": {
         "admin:access": {
           "validUntil": "2026-10-09T11:14:31.456Z"
@@ -179,6 +310,11 @@
     {
       "sub": "usr_moderator",
       "telegramId": "123456789",
+      "roles": {
+        "moderator": {
+          "validUntil": null
+        }
+      },
       "permissions": {
         "tg:messages:delete": {
           "validUntil": null
@@ -197,6 +333,11 @@
     {
       "sub": "usr_web",
       "telegramId": null,
+      "roles": {
+        "web-editor": {
+          "validUntil": null
+        }
+      },
       "permissions": {
         "admin:access": {
           "validUntil": null
