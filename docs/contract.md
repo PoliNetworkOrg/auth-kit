@@ -40,11 +40,11 @@ The executable form of this contract is the `@polinetwork/auth-kit/contract` ent
 ### 2.1 Content
 
 - **Permissions are fully expanded.** Roles are resolved up through their parents and permissions down through their implications, transitively, in the IdP. The SDK only ever does a key lookup and repeats no role logic.
-- **Master Admin is written out, never `*`.** Its entry lists every catalog key the projection carries. Break-glass admins get `validUntil: null`; members of the Entra admin group get that group's `observedAt` + 1 h.
+- **Master Admin is written out, never `*`.** Its entry lists every permission key the projection carries. Break-glass admins get `validUntil: null`; members of the Entra admin group get that group's `observedAt` + 1 h.
 - **Validity per key:** an implied key inherits the validity of the path that granted it. When several paths grant a key, the latest expiry wins and `null` beats any date.
 - **The `backend` projection carries every permission except the IdP's own `idp:*` ones,** which never appear, even when implied by a key that does.
 - **`roles` lists the effective roles** under the same expiry rules: every granted role plus every role it inherits from through its parents. A subject is still included only for its permissions. The SDK reads roles as given (`hasRole`, `roles`) and repeats no hierarchy logic.
-- **`catalog` names every role and every projected permission** (`{ key, name }`, sorted by key), for pickers. It is display data only: when it is missing or malformed, `catalog()` returns empty lists and the snapshot is still accepted.
+- **`catalog` names every role and every projected permission** (`{ key, name }`, sorted by key), for pickers. It is display data only: a missing or malformed `catalog` gives two empty lists, a malformed `roles` or `permissions` list empties only that list, and the snapshot is still accepted.
 - **IdPs before roles were projected** send neither `roles` nor `catalog`. Those snapshots, including persisted ones, still parse, with no roles and an empty catalog.
 - **Absent means no permissions.** People without a projected permission are omitted, including people who linked Telegram. An unknown `sub` or Telegram ID is not an error.
 - **`telegramId` may be `null` for someone who linked Telegram,** when the link is ambiguous (one person with several IDs, or one ID shared by several people). Duplicates therefore cannot appear; the SDK still rejects them as a backstop.
