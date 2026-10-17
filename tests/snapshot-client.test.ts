@@ -52,6 +52,8 @@ describe("accessSnapshot", () => {
     expect(client.status()).toMatchObject({ fresh: true, generation: 4813, subjects: 5 })
     expect(client.has(moderator, "tg:moderate")).toBe(true)
     expect(client.has(moderator, "tg:moderate:global")).toBe(false)
+    expect(client.hasRole(moderator, "moderator")).toBe(true)
+    expect(client.hasRole(moderator, "direttivo")).toBe(false)
     expect(client.subjectByTelegramId("555")?.sub).toBe("usr_direttivo")
   })
 
@@ -61,11 +63,16 @@ describe("accessSnapshot", () => {
     client.stop()
     expect(client.has({ kind: "service", client: "telegram-bot" }, "tg:moderate")).toBe(false)
     expect(client.has({ ...moderator, sub: null }, "tg:moderate")).toBe(false)
+    expect(client.hasRole({ kind: "service", client: "telegram-bot" }, "moderator")).toBe(false)
+    expect(client.hasRole({ ...moderator, sub: null }, "moderator")).toBe(false)
     const direttivo: Actor = { kind: "user", client: "admin-dashboard", sub: "usr_direttivo", telegramId: "555" }
     expect(client.has(direttivo, "tg:moderate:global")).toBe(true)
+    expect(client.hasRole(direttivo, "direttivo")).toBe(true)
     time.advance(55 * 60_000)
     expect(client.has(direttivo, "tg:moderate:global")).toBe(false)
     expect(client.has(direttivo, "tg:audit:read")).toBe(true)
+    expect(client.hasRole(direttivo, "direttivo")).toBe(false)
+    expect(client.hasRole(direttivo, "auditor")).toBe(true)
   })
 
   it("revalidates with the ETag and counts a 304 as a sync", async () => {
@@ -160,6 +167,24 @@ describe("accessSnapshot", () => {
     expect(restarted.client.has(moderator, "tg:moderate")).toBe(true)
     restarted.time.advance(60 * 60_000 + 1)
     expect(restarted.client.has(moderator, "tg:moderate")).toBe(false)
+  })
+
+  it("resumes from a snapshot persisted before roles and the catalog were projected", async () => {
+    const persistence = memoryPersistence()
+    const body = JSON.parse(BODY)
+    delete body.catalog
+    for (const subject of body.subjects) delete subject.roles
+    await persistence.save(
+      "snapshot:backend",
+      JSON.stringify({ body: JSON.stringify(body), etag: ETAG, lastSyncAt: Date.parse("2026-10-09T10:19:00.000Z") })
+    )
+    const { client, errors } = setup(() => new Response(null, { status: 503 }), persistence)
+    await client.start()
+    client.stop()
+    expect(errors).toHaveLength(1)
+    expect(client.has(moderator, "tg:moderate")).toBe(true)
+    expect(client.hasRole(moderator, "moderator")).toBe(false)
+    expect(client.current()?.catalog()).toEqual({ roles: [], permissions: [] })
   })
 
   it("ignores a persisted snapshot dated in the future", async () => {

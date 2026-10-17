@@ -51,6 +51,8 @@ export interface AccessSnapshotClient {
   subjectByTelegramId(telegramId: string | number): AccessSubject | undefined
   /** False for service actors, actors without `sub`, unknown subjects and a stale snapshot. */
   has(actor: Actor, permission: string): boolean
+  /** Like `has`, for an effective role. */
+  hasRole(actor: Actor, role: string): boolean
   status(): SnapshotStatus
 }
 
@@ -186,6 +188,11 @@ export function accessSnapshot(options: AccessSnapshotOptions): AccessSnapshotCl
       if (actor.kind === "service" || actor.sub === null) return false
       const index = decisionIndex()
       return index ? index.has(index.bySub(actor.sub), permission, now()) : false
+    },
+    hasRole(actor, role) {
+      if (actor.kind === "service" || actor.sub === null) return false
+      const index = decisionIndex()
+      return index ? index.hasRole(index.bySub(actor.sub), role, now()) : false
     },
     status() {
       return {

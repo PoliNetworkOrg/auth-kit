@@ -11,7 +11,12 @@ export {
   type KeyStoreStatus,
 } from "./key-store"
 export { memoryPersistence, type Persistence } from "./persistence"
-export { AccessIndex, type AccessSubject } from "./snapshot/access-index"
+export {
+  type AccessCatalog,
+  type AccessCatalogEntry,
+  AccessIndex,
+  type AccessSubject,
+} from "./snapshot/access-index"
 export {
   type AccessSnapshotClient,
   type AccessSnapshotOptions,
