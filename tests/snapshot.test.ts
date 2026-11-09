@@ -39,6 +39,30 @@ describe("parseAccessSnapshot", () => {
     expect(parseAccessSnapshot(withoutRoles(), "backend").bySub("usr_direttivo")?.entraObjectId).toBeNull()
   })
 
+  it.each([null, "123456789"])("rejects duplicate Entra object IDs with Telegram ID %s", (telegramId) => {
+    const body = JSON.parse(fixture("snapshot-v1.json"))
+    body.subjects = [
+      { sub: "first", telegramId, entraObjectId: "shared-oid", permissions: {} },
+      { sub: "second", telegramId: null, entraObjectId: "shared-oid", permissions: {} },
+    ]
+    expectInvalid(JSON.stringify(body))
+  })
+
+  it("accepts unique Entra object IDs alongside multiple null or omitted IDs", () => {
+    const body = JSON.parse(fixture("snapshot-v1.json"))
+    body.subjects = ["first-oid", "second-oid", null, null, undefined, undefined].map((entraObjectId, i) => ({
+      sub: `subject-${i}`,
+      telegramId: null,
+      entraObjectId,
+      permissions: {},
+    }))
+    const index = parseAccessSnapshot(JSON.stringify(body), "backend")
+    expect(index.size).toBe(6)
+    expect(index.bySub("subject-0")?.entraObjectId).toBe("first-oid")
+    expect(index.bySub("subject-1")?.entraObjectId).toBe("second-oid")
+    for (let i = 2; i < 6; i++) expect(index.bySub(`subject-${i}`)?.entraObjectId).toBeNull()
+  })
+
   it("rejects an empty Microsoft 365 object ID", () => {
     const body = JSON.parse(fixture("snapshot-v1.json"))
     body.subjects[0].entraObjectId = ""

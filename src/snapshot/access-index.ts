@@ -80,10 +80,11 @@ export class AccessIndex {
     this.#byTelegramId = byTelegramId
   }
 
-  /** Throws `snapshot_invalid` on a duplicate `sub` or Telegram ID. */
+  /** Throws `snapshot_invalid` on a duplicate `sub`, Telegram ID or non-null Entra object ID. */
   static from(body: AccessSnapshotBody): AccessIndex {
     const bySub = new Map<string, AccessSubject>()
     const byTelegramId = new Map<string, AccessSubject>()
+    const entraObjectIds = new Set<string>()
     for (const raw of body.subjects) {
       const subject: AccessSubject = Object.freeze({
         sub: raw.sub,
@@ -94,6 +95,11 @@ export class AccessIndex {
       })
       if (bySub.has(subject.sub)) throw new AuthKitError("snapshot_invalid", `Duplicate sub ${subject.sub}`)
       bySub.set(subject.sub, subject)
+      if (subject.entraObjectId !== null) {
+        if (entraObjectIds.has(subject.entraObjectId))
+          throw new AuthKitError("snapshot_invalid", `Duplicate Entra object ID ${subject.entraObjectId}`)
+        entraObjectIds.add(subject.entraObjectId)
+      }
       if (subject.telegramId === null) continue
       if (byTelegramId.has(subject.telegramId))
         throw new AuthKitError("snapshot_invalid", `Duplicate Telegram ID ${subject.telegramId}`)
