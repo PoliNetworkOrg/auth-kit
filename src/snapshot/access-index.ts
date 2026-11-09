@@ -4,6 +4,11 @@ import { AuthKitError } from "../errors"
 export type AccessSubject = Readonly<{
   sub: string
   telegramId: string | null
+  /**
+   * Entra object ID (`oid`) of the PoliNetwork Microsoft 365 account the subject signs in with;
+   * `null` when not linked, when ambiguous, or from IdPs before it was projected.
+   */
+  entraObjectId: string | null
   /** Effective role key → expiry in epoch milliseconds; `null` never expires. */
   roles: ReadonlyMap<string, number | null>
   /** Permission key → expiry in epoch milliseconds; `null` never expires. */
@@ -75,19 +80,26 @@ export class AccessIndex {
     this.#byTelegramId = byTelegramId
   }
 
-  /** Throws `snapshot_invalid` on a duplicate `sub` or Telegram ID. */
+  /** Throws `snapshot_invalid` on a duplicate `sub`, Telegram ID or non-null Entra object ID. */
   static from(body: AccessSnapshotBody): AccessIndex {
     const bySub = new Map<string, AccessSubject>()
     const byTelegramId = new Map<string, AccessSubject>()
+    const entraObjectIds = new Set<string>()
     for (const raw of body.subjects) {
       const subject: AccessSubject = Object.freeze({
         sub: raw.sub,
         telegramId: raw.telegramId,
+        entraObjectId: raw.entraObjectId ?? null,
         roles: epochs(raw.roles),
         permissions: epochs(raw.permissions),
       })
       if (bySub.has(subject.sub)) throw new AuthKitError("snapshot_invalid", `Duplicate sub ${subject.sub}`)
       bySub.set(subject.sub, subject)
+      if (subject.entraObjectId !== null) {
+        if (entraObjectIds.has(subject.entraObjectId))
+          throw new AuthKitError("snapshot_invalid", `Duplicate Entra object ID ${subject.entraObjectId}`)
+        entraObjectIds.add(subject.entraObjectId)
+      }
       if (subject.telegramId === null) continue
       if (byTelegramId.has(subject.telegramId))
         throw new AuthKitError("snapshot_invalid", `Duplicate Telegram ID ${subject.telegramId}`)

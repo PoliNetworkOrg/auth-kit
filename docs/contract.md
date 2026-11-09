@@ -49,6 +49,7 @@ The executable form of this contract is the `@polinetwork/auth-kit/contract` ent
 - **Absent means no permissions.** People without a projected permission are omitted, including people who linked Telegram. An unknown `sub` or Telegram ID is not an error.
 - **`telegramId` may be `null` for someone who linked Telegram,** when the link is ambiguous (one person with several IDs, or one ID shared by several people). Duplicates therefore cannot appear; the SDK still rejects them as a backstop.
 - **`telegramId` is a decimal string** matching `^[1-9]\d*$`.
+- **`entraObjectId` is the Entra object ID (`oid`)** of the PoliNetwork Microsoft 365 account the subject signs in with, the one that proves `socio` and `direttivo`. Use it to find the person's own records keyed by their Microsoft 365 account. Like `telegramId`, it is `null` when the subject has no Microsoft 365 sign-in or the link is ambiguous (one person with several Microsoft 365 accounts, or one account shared by several people), so it never appears twice. It stays while the account is linked, whatever the group membership. IdPs before it was projected omit it, and the SDK reads that as `null`.
 - **Until Phase 2** creates the `tg:*` permissions, the production snapshot is nearly empty. Test against a local IdP with seeded permissions.
 
 ### 2.2 Format details **(differs from RFC)**

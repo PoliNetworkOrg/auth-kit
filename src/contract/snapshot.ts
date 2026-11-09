@@ -42,6 +42,8 @@ export const accessSnapshotSchema = z.object({
         .string()
         .regex(/^[1-9]\d*$/)
         .nullable(),
+      /** Absent from IdPs before the Microsoft 365 object ID was projected. */
+      entraObjectId: z.string().min(1).nullable().optional(),
       /** Absent from IdPs before roles were projected. */
       roles: expiries.optional(),
       permissions: expiries,
@@ -66,6 +68,8 @@ export type AccessSubjectV1 = {
   sub: string
   /** Decimal string; null when not linked or ambiguous. */
   telegramId: string | null
+  /** Entra object ID (`oid`) of the linked PoliNetwork Microsoft 365 account; null when not linked or ambiguous. */
+  entraObjectId: string | null
   /** Granted roles plus every role they inherit from; `validUntil: null` never expires. */
   roles: Record<string, { validUntil: string | null }>
   /** Fully expanded keys; `validUntil: null` never expires. */
