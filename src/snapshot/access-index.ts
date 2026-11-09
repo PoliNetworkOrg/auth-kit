@@ -4,6 +4,11 @@ import { AuthKitError } from "../errors"
 export type AccessSubject = Readonly<{
   sub: string
   telegramId: string | null
+  /**
+   * Entra object ID (`oid`) of the PoliNetwork Microsoft 365 account the subject signs in with;
+   * `null` when not linked, when ambiguous, or from IdPs before it was projected.
+   */
+  entraObjectId: string | null
   /** Effective role key → expiry in epoch milliseconds; `null` never expires. */
   roles: ReadonlyMap<string, number | null>
   /** Permission key → expiry in epoch milliseconds; `null` never expires. */
@@ -83,6 +88,7 @@ export class AccessIndex {
       const subject: AccessSubject = Object.freeze({
         sub: raw.sub,
         telegramId: raw.telegramId,
+        entraObjectId: raw.entraObjectId ?? null,
         roles: epochs(raw.roles),
         permissions: epochs(raw.permissions),
       })

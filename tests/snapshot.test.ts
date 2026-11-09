@@ -5,11 +5,14 @@ import { fixture } from "./fixtures"
 const BUILT_AT = Date.parse("2026-10-09T10:15:02.123Z")
 const DIRETTIVO_EXPIRY = Date.parse("2026-10-09T11:14:31.456Z")
 
-/** The v1 fixture as an IdP sent it before roles and the catalog were projected. */
+/** The v1 fixture as an IdP sent it before roles, the catalog and Microsoft 365 object IDs were projected. */
 function withoutRoles(): string {
   const body = JSON.parse(fixture("snapshot-v1.json"))
   delete body.catalog
-  for (const subject of body.subjects) delete subject.roles
+  for (const subject of body.subjects) {
+    delete subject.roles
+    delete subject.entraObjectId
+  }
   return JSON.stringify(body)
 }
 
@@ -27,6 +30,19 @@ describe("parseAccessSnapshot", () => {
     expect(index.byTelegramId(123456789)?.sub).toBe("usr_moderator")
     expect(index.byTelegramId("555")?.sub).toBe("usr_direttivo")
     expect(index.bySub("usr_web")?.telegramId).toBeNull()
+  })
+
+  it("carries each subject's Microsoft 365 object ID, null when not linked", () => {
+    const index = parseAccessSnapshot(fixture("snapshot-v1.json"), "backend")
+    expect(index.bySub("usr_direttivo")?.entraObjectId).toBe("9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d")
+    expect(index.bySub("usr_moderator")?.entraObjectId).toBeNull()
+    expect(parseAccessSnapshot(withoutRoles(), "backend").bySub("usr_direttivo")?.entraObjectId).toBeNull()
+  })
+
+  it("rejects an empty Microsoft 365 object ID", () => {
+    const body = JSON.parse(fixture("snapshot-v1.json"))
+    body.subjects[0].entraObjectId = ""
+    expectInvalid(JSON.stringify(body))
   })
 
   it("treats unknown subjects and Telegram IDs as holding nothing", () => {

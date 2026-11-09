@@ -139,6 +139,7 @@
     {
       "sub": "usr_admin_breakglass",
       "telegramId": "100000001",
+      "entraObjectId": null,
       "roles": {
         "master-admin": {
           "validUntil": null
@@ -207,6 +208,7 @@
     {
       "sub": "usr_admin_entra",
       "telegramId": null,
+      "entraObjectId": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
       "roles": {
         "master-admin": {
           "validUntil": "2026-10-09T11:14:58.001Z"
@@ -275,6 +277,7 @@
     {
       "sub": "usr_direttivo",
       "telegramId": "555",
+      "entraObjectId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
       "roles": {
         "auditor": {
           "validUntil": null
@@ -310,6 +313,7 @@
     {
       "sub": "usr_moderator",
       "telegramId": "123456789",
+      "entraObjectId": null,
       "roles": {
         "moderator": {
           "validUntil": null
@@ -333,6 +337,7 @@
     {
       "sub": "usr_web",
       "telegramId": null,
+      "entraObjectId": null,
       "roles": {
         "web-editor": {
           "validUntil": null
